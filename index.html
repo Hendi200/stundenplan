@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23007aff'/><text x='50' y='68' text-anchor='middle' font-size='50' font-weight='bold' fill='white'>S</text></svg>">
     <title>Stundenplan</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -19,12 +26,12 @@
             --snap:cubic-bezier(.22,1,.36,1);--ease:cubic-bezier(.4,0,.2,1)
         }
         @media(prefers-color-scheme:dark){:root{
-            --bg:#000;--card:#111;--border:rgba(255,255,255,.07);
-            --tp:#f5f5f7;--ts:#d1d1d6;--ts2:#a1a1a6;--tm:#636366;--tm2:#48484a;
-            --cell:rgba(255,255,255,.035);--cell-f:rgba(255,255,255,.08);
-            --mb:#161618;--mt:#f5f5f7;--mm:#8e8e93;
-            --mi:rgba(255,255,255,.06);--mh:rgba(255,255,255,.1);
-            --ib:rgba(255,255,255,.12);--ig:#222224
+            --bg:#0a0a0a;--card:#1c1c1e;--border:rgba(255,255,255,.06);
+            --tp:#fff;--ts:#e5e5ea;--ts2:#aeaeb2;--tm:#636366;--tm2:#48484a;
+            --cell:#2a2a2c;--cell-f:#333336;
+            --mb:#1c1c1e;--mt:#fff;--mm:#98989d;
+            --mi:rgba(255,255,255,.07);--mh:rgba(255,255,255,.12);
+            --ib:rgba(255,255,255,.15);--ig:#2c2c2e
         }}
         html,body{overflow:hidden;width:100%;height:100%}
         body{font-family:'DM Sans',sans-serif;background:var(--bg);height:100dvh;overscroll-behavior:none;display:flex;flex-direction:column}
@@ -40,7 +47,7 @@
         .trkr{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;flex-shrink:0}.trkr:empty{margin:0}
         .trk{border-radius:8px;padding:3px 10px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace}
         .trk:active{transform:scale(.92)}
-        .trk.p{background:var(--mi);color:var(--ts2);border:1px solid var(--border)}
+        .trk.p{background:transparent;color:var(--tm);border:1px solid var(--ib)}
         .trk.d{background:#34c759;color:#fff;border:1px solid transparent}
         .swipe-wrap{flex:1;position:relative;overflow:hidden;min-height:0;touch-action:none}
         .swipe-inner{display:flex;width:300%;height:100%;will-change:transform}
@@ -492,5 +499,6 @@ function manualBulkSave(){
 function init(){ld();document.getElementById('wd').textContent=`KW ${cw}, ${cy}`;autoReq();render();initSwipe()}
 init();
 </script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})</script>
 </body>
 </html>
