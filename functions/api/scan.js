@@ -31,29 +31,47 @@ export async function onRequest(context) {
     const geminiBody = {
       contents: [{
         parts: [
-          { inlineData: { mimeType: body.image.mimeType, data: body.image.data } },
-          { text: body.prompt }
+          {
+            inlineData: {
+              mimeType: body.image.mimeType,
+              data: body.image.data,
+            }
+          },
+          {
+            text: body.prompt
+          }
         ]
       }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 4096 }
+      generationConfig: {
+        temperature: 0.1,
+        maxOutputTokens: 4096,
+      }
     };
 
     const resp = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
-      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(geminiBody) }
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(geminiBody),
+      }
     );
 
     const data = await resp.json();
 
     if (!resp.ok) {
-      return new Response(JSON.stringify({ error: data.error?.message || 'Gemini Fehler ' + resp.status }), {
+      return new Response(JSON.stringify({ error: data.error?.message || 'Gemini API Fehler ' + resp.status }), {
         status: resp.status, headers: ch,
       });
     }
 
+    // Extract ALL text parts from Gemini response
     let text = '';
     if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-      text = data.candidates[0].content.parts.filter(p => p.text).map(p => p.text).join('');
+      text = data.candidates[0].content.parts
+        .filter(p => p.text)
+        .map(p => p.text)
+        .join('');
     }
 
     return new Response(JSON.stringify({ text }), { headers: ch });
