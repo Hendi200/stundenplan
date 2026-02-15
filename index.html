@@ -290,14 +290,7 @@ async function handleLBPhoto(input){
         const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file)});
         const mtype=file.type||'image/jpeg';
         console.log('LB scan: image ready,',Math.round(b64.length/1024)+'kb');
-        const resp=await fetch('/api/scan',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                max_tokens:1000,
-                messages:[{role:'user',content:[
-                    {type:'image',source:{type:'base64',media_type:mtype,data:b64}},
-                    {type:'text',text:`Dieses Bild zeigt einen Lernbüro-Plan einer Schule. Jede Spalte ist ein Lernbüro-Angebot.
+        const prompt=`Dieses Bild zeigt einen Lernbüro-Plan einer Schule. Jede Spalte ist ein Lernbüro-Angebot.
 
 Oben in jeder Spalte stehen Fachkürzel (z.B. "E", "EK", "M", "D", "BI", "PA", "KR"). Manchmal stehen MEHRERE Fächer in einer Spalte (z.B. "E  EK" oder "M  PA") — das bedeutet es werden mehrere Fächer angeboten, ABER mit dem gleichen Lehrer und Raum.
 
@@ -307,14 +300,19 @@ Darunter steht der Raum (z.B. "1-01", "2-01", "2-02", "1-02").
 Gib mir ALLE Angebote als JSON-Array zurück. Wenn eine Spalte mehrere Fächer hat, erstelle für JEDES Fach einen eigenen Eintrag mit dem gleichen Lehrer und Raum.
 
 Antworte NUR mit dem JSON-Array, kein anderer Text:
-[{"s":"E","t":"RKJO","r":"1-01"},{"s":"EK","t":"RKJO","r":"1-01"},...]`}
-                ]}]
+[{"s":"E","t":"RKJO","r":"1-01"},{"s":"EK","t":"RKJO","r":"1-01"},...]`;
+        const resp=await fetch('/api/scan',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                image:{data:b64,mimeType:mtype},
+                prompt:prompt
             })
         });
         console.log('LB scan: response status',resp.status);
         if(!resp.ok){let msg='API Fehler '+resp.status;try{const e=await resp.json();msg=e.error?.message||e.error||msg}catch(x){}throw new Error(msg)}
         const data=await resp.json();
-        const text=(data.content||[]).map(c=>c.text||'').join('');
+        const text=data.text||'';
         const clean=text.replace(/```json|```/g,'').trim();
         scanParsed=JSON.parse(clean);
         showScanResults();
