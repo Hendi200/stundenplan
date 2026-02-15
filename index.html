@@ -195,6 +195,28 @@
         }
         @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
         @keyframes spin{to{transform:rotate(360deg)}}
+        /* CROP OVERLAY */
+        .crop-ov{display:none;position:fixed;inset:0;background:#000;z-index:2000;flex-direction:column}
+        .crop-ov.vis{display:flex}
+        .crop-top{position:absolute;top:0;left:0;right:0;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:1;background:linear-gradient(rgba(0,0,0,.6),transparent)}
+        .crop-top span{color:#fff;font-weight:700;font-size:14px}
+        .crop-btn{padding:8px 18px;border-radius:20px;border:none;font-weight:700;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+        .crop-cancel{background:rgba(255,255,255,.2);color:#fff}
+        .crop-done{background:#007aff;color:#fff}
+        .crop-area{flex:1;position:relative;overflow:hidden;touch-action:none}
+        .crop-img{position:absolute;transform-origin:0 0}
+        .crop-rect{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.55);border-radius:4px;touch-action:none;cursor:move}
+        .crop-handle{position:absolute;width:28px;height:28px;z-index:2}
+        .crop-handle::after{content:'';position:absolute;background:#fff;border-radius:2px}
+        .crop-handle.tl{top:-4px;left:-4px}.crop-handle.tl::after{width:16px;height:3px;top:0;left:0}
+        .crop-handle.tl::before{content:'';position:absolute;width:3px;height:16px;top:0;left:0;background:#fff;border-radius:2px}
+        .crop-handle.tr{top:-4px;right:-4px}.crop-handle.tr::after{width:16px;height:3px;top:0;right:0}
+        .crop-handle.tr::before{content:'';position:absolute;width:3px;height:16px;top:0;right:0;background:#fff;border-radius:2px}
+        .crop-handle.bl{bottom:-4px;left:-4px}.crop-handle.bl::after{width:16px;height:3px;bottom:0;left:0}
+        .crop-handle.bl::before{content:'';position:absolute;width:3px;height:16px;bottom:0;left:0;background:#fff;border-radius:2px}
+        .crop-handle.br{bottom:-4px;right:-4px}.crop-handle.br::after{width:16px;height:3px;bottom:0;right:0}
+        .crop-handle.br::before{content:'';position:absolute;width:3px;height:16px;bottom:0;right:0;background:#fff;border-radius:2px}
+        .crop-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:rgba(255,255,255,.5);font-size:11px;z-index:1}
     </style>
 </head>
 <body>
@@ -222,6 +244,11 @@
 <div class="stl">Importieren</div><div class="scan-section"><button class="scan-btn" onclick="startCam()">QR-Code scannen</button><div class="scan-or">oder</div><div class="paste-row"><input class="scan-input" id="scanInput" placeholder="Code einfügen…"><button class="paste-btn" onclick="doPaste()">Einfügen</button></div><button class="sbtn" style="margin-top:4px" onclick="importCode()">Importieren</button></div>
 <div style="height:24px"></div>
 </div></div>
+<div class="crop-ov" id="cropOv">
+<div class="crop-top"><button class="crop-btn crop-cancel" onclick="cancelCrop()">Abbrechen</button><span>Zuschneiden</span><button class="crop-btn crop-done" onclick="doCrop()">Fertig</button></div>
+<div class="crop-area" id="cropArea"><img class="crop-img" id="cropImg"><div class="crop-rect" id="cropRect"><div class="crop-handle tl" data-h="tl"></div><div class="crop-handle tr" data-h="tr"></div><div class="crop-handle bl" data-h="bl"></div><div class="crop-handle br" data-h="br"></div></div></div>
+<div class="crop-hint">Bereich auswählen, dann "Fertig"</div>
+</div>
 <input type="file" id="lbFileInput" accept="image/*" capture="environment" style="display:none" onchange="handleLBPhoto(this)">
 <div class="mo" id="lbScanM"><div class="mo-bg" onclick="closeSheet('lbScanM')"></div><div class="mc"><div class="shh"></div><div class="mhr"><h2 class="mtl">Erkannte Lernbüros</h2><button class="mx" onclick="closeSheet('lbScanM')">&#10005;</button></div><div id="lbScanStatus" style="text-align:center;padding:16px;font-size:12px;color:var(--mm)">Bild wird analysiert...</div><div id="lbScanResults"></div><button class="sbtn" id="lbScanSave" style="display:none" onclick="saveScanResults()">Alle hinzufügen</button></div></div>
 <script>
@@ -282,28 +309,103 @@ async function doPaste(){try{const t=await navigator.clipboard.readText();if(t)d
 async function startCam(){closeSheet('setM');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080}}});const v=document.getElementById('camV');v.srcObject=camStream;await v.play();const track=camStream.getVideoTracks()[0];if(track.getCapabilities){const cap=track.getCapabilities(),adv={};if(cap.focusMode&&cap.focusMode.includes('continuous'))adv.focusMode='continuous';if(cap.exposureMode&&cap.exposureMode.includes('continuous'))adv.exposureMode='continuous';if(Object.keys(adv).length)try{await track.applyConstraints({advanced:[adv]})}catch(e){}}document.getElementById('camOv').classList.add('vis');const c=document.getElementById('camC'),ctx=c.getContext('2d',{willReadFrequently:true});if(!window.jsQR){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';document.head.appendChild(s);await new Promise(r=>{s.onload=r;s.onerror=()=>r()})}scanInterval=setInterval(()=>{if(!window.jsQR||v.readyState!==v.HAVE_ENOUGH_DATA)return;c.width=v.videoWidth;c.height=v.videoHeight;ctx.drawImage(v,0,0);const img=ctx.getImageData(0,0,c.width,c.height);const code=jsQR(img.data,img.width,img.height,{inversionAttempts:'attemptBoth'});if(code&&code.data){stopCam();vib([3,8,3,8,3]);if(doImport(code.data))alert('Importiert!');else alert('Ungültiger QR-Code')}},100)}catch(e){alert('Kamera nicht verfügbar')}}
 function stopCam(){if(scanInterval){clearInterval(scanInterval);scanInterval=null}if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null}document.getElementById('camOv').classList.remove('vis')}
 // ---- LB Photo Scan ----
-let scanParsed=[],scanSlotId=null;
+let scanParsed=[],scanSlotId=null,cropFile=null;
 function startLBScan(){
     scanSlotId=sel;document.getElementById('lbFileInput').click();
 }
 async function handleLBPhoto(input){
     const file=input.files[0];if(!file)return;
     input.value='';
-    // Show loading sheet immediately
+    cropFile=file;
+    closeSheet('editM');
+    // Show crop overlay
+    const url=URL.createObjectURL(file);
+    const img=document.getElementById('cropImg');
+    img.onload=()=>{
+        const area=document.getElementById('cropArea');
+        const aw=area.clientWidth,ah=area.clientHeight;
+        const scale=Math.min(aw/img.naturalWidth,ah/img.naturalHeight);
+        const iw=img.naturalWidth*scale,ih=img.naturalHeight*scale;
+        const ox=(aw-iw)/2,oy=(ah-ih)/2;
+        img.style.width=iw+'px';img.style.height=ih+'px';
+        img.style.left=ox+'px';img.style.top=oy+'px';
+        img._s=scale;img._ox=ox;img._oy=oy;img._iw=iw;img._ih=ih;
+        // Init crop rect to full image
+        const r=document.getElementById('cropRect');
+        const m=8;
+        r.style.left=(ox+m)+'px';r.style.top=(oy+m)+'px';
+        r.style.width=(iw-m*2)+'px';r.style.height=(ih-m*2)+'px';
+        initCropDrag();
+        document.getElementById('cropOv').classList.add('vis');
+    };
+    img.src=url;
+}
+function cancelCrop(){document.getElementById('cropOv').classList.remove('vis');cropFile=null}
+function initCropDrag(){
+    const rect=document.getElementById('cropRect'),area=document.getElementById('cropArea');
+    let mode=null,sx,sy,sl,st,sw,sh;
+    function onStart(e){
+        const t=e.touches?e.touches[0]:e;
+        sx=t.clientX;sy=t.clientY;
+        const b=rect.getBoundingClientRect();
+        sl=rect.offsetLeft;st=rect.offsetTop;sw=rect.offsetWidth;sh=rect.offsetHeight;
+        const target=e.target.closest('.crop-handle');
+        mode=target?target.dataset.h:'move';
+    }
+    function onMove(e){
+        if(!mode)return;e.preventDefault();
+        const t=e.touches?e.touches[0]:e;
+        const dx=t.clientX-sx,dy=t.clientY-sy;
+        const img=document.getElementById('cropImg');
+        const minS=30;
+        let nl=sl,nt=st,nw=sw,nh=sh;
+        if(mode==='move'){nl=sl+dx;nt=st+dy}
+        else if(mode==='tl'){nl=sl+dx;nt=st+dy;nw=sw-dx;nh=sh-dy}
+        else if(mode==='tr'){nt=st+dy;nw=sw+dx;nh=sh-dy}
+        else if(mode==='bl'){nl=sl+dx;nw=sw-dx;nh=sh+dy}
+        else if(mode==='br'){nw=sw+dx;nh=sh+dy}
+        if(nw<minS){nw=minS;if(mode==='tl'||mode==='bl')nl=sl+sw-minS}
+        if(nh<minS){nh=minS;if(mode==='tl'||mode==='tr')nt=st+sh-minS}
+        nl=Math.max(img._ox,Math.min(nl,img._ox+img._iw-nw));
+        nt=Math.max(img._oy,Math.min(nt,img._oy+img._ih-nh));
+        nw=Math.min(nw,img._ox+img._iw-nl);
+        nh=Math.min(nh,img._oy+img._ih-nt);
+        rect.style.left=nl+'px';rect.style.top=nt+'px';
+        rect.style.width=nw+'px';rect.style.height=nh+'px';
+    }
+    function onEnd(){mode=null}
+    rect.ontouchstart=rect.onmousedown=onStart;
+    area.ontouchmove=area.onmousemove=onMove;
+    area.ontouchend=area.onmouseup=onEnd;
+}
+async function doCrop(){
+    document.getElementById('cropOv').classList.remove('vis');
+    const img=document.getElementById('cropImg');
+    const rect=document.getElementById('cropRect');
+    const s=img._s;
+    // Calculate crop in original image coords
+    const cx=(rect.offsetLeft-img._ox)/s;
+    const cy2=(rect.offsetTop-img._oy)/s;
+    const cw2=rect.offsetWidth/s;
+    const ch2=rect.offsetHeight/s;
+    // Draw cropped region to canvas
+    const c=document.createElement('canvas');
+    c.width=Math.round(cw2);c.height=Math.round(ch2);
+    const ctx=c.getContext('2d');
+    ctx.drawImage(img,cx,cy2,cw2,ch2,0,0,c.width,c.height);
+    // Convert to base64
+    const b64=c.toDataURL('image/jpeg',0.9).split(',')[1];
+    // Now send to API
+    await sendScan(b64,'image/jpeg');
+}
+async function sendScan(b64,mtype){
     document.getElementById('lbScanStatus').style.display='block';
     document.getElementById('lbScanStatus').innerHTML='<div style="margin-bottom:8px">Bild wird analysiert...</div><div style="width:40px;height:40px;border:3px solid var(--ib);border-top-color:var(--mt);border-radius:50%;margin:0 auto;animation:spin .6s linear infinite"></div>';
     document.getElementById('lbScanResults').innerHTML='';
     document.getElementById('lbScanSave').style.display='none';
-    // Close edit, open scan sheet
-    closeSheet('editM');
-    await new Promise(r=>setTimeout(r,280));
     openSheet('lbScanM');
-    // Convert to base64
     try{
-        console.log('LB scan: fetching /api/scan');
-        const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file)});
-        const mtype=file.type||'image/jpeg';
-        console.log('LB scan: image ready,',Math.round(b64.length/1024)+'kb');
+        console.log('LB scan: fetching /api/scan,',Math.round(b64.length/1024)+'kb');
         const prompt=`Dieses Bild zeigt einen Lernbüro-Plan einer Schule. Jede Spalte ist ein Lernbüro-Angebot.
 
 Oben in jeder Spalte stehen Fachkürzel (z.B. "E", "EK", "M", "D", "BI", "PA", "KR"). Manchmal stehen MEHRERE Fächer in einer Spalte (z.B. "E  EK" oder "M  PA") — das bedeutet es werden mehrere Fächer angeboten, ABER mit dem gleichen Lehrer und Raum.
@@ -318,10 +420,7 @@ Antworte NUR mit dem JSON-Array, kein anderer Text:
         const resp=await fetch('/api/scan',{
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                image:{data:b64,mimeType:mtype},
-                prompt:prompt
-            })
+            body:JSON.stringify({image:{data:b64,mimeType:mtype},prompt:prompt})
         });
         console.log('LB scan: response status',resp.status);
         if(!resp.ok){let msg='API Fehler '+resp.status;try{const e=await resp.json();msg=e.error?.message||e.error||msg}catch(x){}throw new Error(msg)}
