@@ -209,11 +209,7 @@
     </style>
 </head>
 <body>
-<div class="splash" id="splash">
-    <div class="splash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="9" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="16" width="7" height="5" rx="1.5"/></svg></div>
-    <div class="splash-text">Stundenplan</div>
-</div>
-<div class="ctn" style="opacity:0" id="mainCtn">
+<div class="ctn" id="mainCtn">
     <div class="hdr"><div></div><div class="wnav"><button class="wb" onclick="chW(-1)">&#9664;</button><span id="wd">KW 6, 2026</span><button class="wb" onclick="chW(1)">&#9654;</button></div><button class="gear-btn" onclick="openSheet('setM')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
     <div class="eban" id="eb">Bearbeitungsmodus aktiv</div>
     <div class="trkr" id="trkr"></div>
@@ -427,9 +423,7 @@ function manualBulkSave(){
     });
     if(added){vib([3,8,3,8,3]);render();closeSheet('lbScanM');setTimeout(()=>{sel=id;openEdit(id);sTab('l')},300)}else{vib([10,6,10])}
 }
-function init(){ld();document.getElementById('wd').textContent=`KW ${cw}, ${cy}`;autoReq();render();initSwipe();applyTimes();
-const main=document.getElementById('mainCtn');main.style.transition='opacity .3s ease';main.style.opacity='1';
-setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove()},1300)}
+function init(){ld();document.getElementById('wd').textContent=`KW ${cw}, ${cy}`;autoReq();render();initSwipe();applyTimes()}
 init();
 </script>
 <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})</script>
