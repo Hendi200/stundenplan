@@ -198,16 +198,27 @@
         @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
         @keyframes spin{to{transform:rotate(360deg)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes growIn{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
-        @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-        /* Intro animations */
-        .intro .hdr{animation:slideDown .5s cubic-bezier(.34,1.56,.64,1) both}
-        .intro .trkr{animation:slideDown .5s cubic-bezier(.34,1.56,.64,1) .1s both}
-        .intro .swipe-wrap{animation:growIn .6s cubic-bezier(.34,1.56,.64,1) .15s both}
+        /* Splash → App transition */
+        .splash-wrap{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;pointer-events:none}
+        .splash-logo{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,#3d9aff,#007aff);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,122,255,.25);transition:all .6s cubic-bezier(.34,1.56,.64,1)}
+        .splash-logo svg{width:36px;height:36px;transition:opacity .2s}
+        .splash-label{position:absolute;margin-top:110px;font-size:17px;font-weight:800;color:var(--tp);opacity:0;transition:opacity .3s .1s}
+        .splash-wrap.phase1 .splash-label{opacity:1}
+        .splash-wrap.phase2 .splash-logo{width:100vw;height:100dvh;border-radius:0;box-shadow:none;background:var(--bg)}
+        .splash-wrap.phase2 .splash-logo svg{opacity:0}
+        .splash-wrap.phase2 .splash-label{opacity:0;transition:opacity .15s}
+        .splash-wrap.phase3{opacity:0;transition:opacity .25s}
+        .ctn-intro .hdr{animation:fadeUp .4s cubic-bezier(.34,1.56,.64,1) .05s both}
+        .ctn-intro .trkr{animation:fadeUp .4s cubic-bezier(.34,1.56,.64,1) .12s both}
+        .ctn-intro .swipe-wrap{animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) .18s both}
     </style>
 </head>
 <body>
-<div class="ctn" id="mainCtn">
+<div class="splash-wrap" id="splashWrap">
+    <div class="splash-logo" id="splashLogo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="9" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="16" width="7" height="5" rx="1.5"/></svg></div>
+    <div class="splash-label">Stundenplan</div>
+</div>
+<div class="ctn" id="mainCtn" style="opacity:0">
     <div class="hdr"><div></div><div class="wnav"><button class="wb" onclick="chW(-1)">&#9664;</button><span id="wd">KW 6, 2026</span><button class="wb" onclick="chW(1)">&#9654;</button></div><button class="gear-btn" onclick="openSheet('setM')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
     <div class="eban" id="eb">Bearbeitungsmodus aktiv</div>
     <div class="trkr" id="trkr"></div>
@@ -422,8 +433,17 @@ function manualBulkSave(){
     if(added){vib([3,8,3,8,3]);render();closeSheet('lbScanM');setTimeout(()=>{sel=id;openEdit(id);sTab('l')},300)}else{vib([10,6,10])}
 }
 function init(){ld();document.getElementById('wd').textContent=`KW ${cw}, ${cy}`;autoReq();render();initSwipe();applyTimes();
-document.getElementById('mainCtn').classList.add('intro');
-setTimeout(()=>{document.getElementById('mainCtn').classList.remove('intro');firstLoad=false},1000)}
+// Splash sequence: icon → show label → expand to fullscreen → reveal app
+const sw=document.getElementById('splashWrap');
+const main=document.getElementById('mainCtn');
+// Phase 1: show label
+setTimeout(()=>sw.classList.add('phase1'),100);
+// Phase 2: icon expands to fill screen
+setTimeout(()=>sw.classList.add('phase2'),600);
+// Phase 3: reveal app underneath, fade out splash
+setTimeout(()=>{main.style.opacity='1';main.classList.add('ctn-intro');sw.classList.add('phase3')},1050);
+// Cleanup
+setTimeout(()=>{sw.remove();main.classList.remove('ctn-intro');firstLoad=false},1400)}
 init();
 </script>
 <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})</script>
