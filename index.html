@@ -37,7 +37,6 @@
         .eban{background:rgba(255,159,10,.06);border:1px solid rgba(255,159,10,.1);border-radius:10px;padding:5px 10px;margin-bottom:5px;display:none;align-items:center;color:#ff9f0a;font-weight:600;font-size:11px;flex-shrink:0}.eban.vis{display:flex}
         .trkr{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;flex-shrink:0}.trkr:empty{margin:0}
         .trk{border-radius:8px;padding:3px 10px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;transition:all .3s cubic-bezier(.34,1.56,.64,1);animation:fadeUp .3s ease both}
-        .trk:active{transform:scale(.88)}
         .trk.p{background:transparent;color:var(--tm);border:1px solid var(--ib)}
         .trk.d{background:#34c759;color:#fff;border:1px solid transparent}
         .swipe-wrap{flex:1;position:relative;overflow:hidden;min-height:0;touch-action:none}
@@ -56,7 +55,7 @@
         .tc-time2{font-size:7px;color:var(--tm2);font-family:'JetBrains Mono',monospace;line-height:1}
         /* CELLS */
         .sl{background:var(--cell);border-radius:9px;cursor:pointer;border:none;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;transition:transform .15s cubic-bezier(.34,1.56,.64,1),background .2s;padding:2px 3px}
-        .sl::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:9px 0 0 9px;opacity:0;transition:opacity .08s}
+        .sl::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:9px 0 0 9px;opacity:0;transition:opacity .08s;background:var(--sc,transparent)}
         .sl.hc{background:var(--cell-f)}.sl.hc::before{opacity:1}
         .sl:active{transform:scale(.96)}
         .edit-mode .sl{outline:1.5px dashed rgba(255,159,10,.2);outline-offset:-1.5px}
@@ -71,30 +70,6 @@
         .lr{font-size:7px;color:var(--tm);font-family:'JetBrains Mono',monospace;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
         .sd{display:none;position:absolute;top:1px;right:1px;width:13px;height:13px;background:rgba(255,59,48,.85);border:none;border-radius:3px;color:#fff;font-size:7px;cursor:pointer;z-index:5;line-height:13px;text-align:center}
         .edit-mode .sl.hc .sd{display:block}
-        /* LEFT BAR COLORS */
-        .sc-d::before{background:#ff3b30}
-        .sc-ek::before{background:#34c759}
-        .sc-li::before{background:#ffcc00}
-        .sc-m::before{background:#ffcc00}
-        .sc-ph::before{background:#34c759}
-        .sc-ge::before{background:#32ade6}
-        .sc-mu::before{background:#8e8e93}
-        .sc-l8::before{background:#ff9500}
-        .sc-ch::before{background:#af52de}
-        .sc-if::before{background:#ffcc00}
-        .sc-pa::before{background:#ff9500}
-        .sc-e::before{background:#007aff}
-        .sc-sw::before{background:#007aff}
-        .sc-no::before{background:#ff3b30}
-        .sc-bi::before{background:#30d158}
-        .sc-kr::before{background:#ff2d78}
-        .sc-pl::before{background:#ff2d78}
-        .sc-nl::before,.sc-sn::before,.sc-fr::before,.sc-la::before{background:#ff9500}
-        .sc-ku::before{background:#8e8e93}
-        .sc-sp::before{background:#32ade6}
-        .sc-mv::before,.sc-ev::before,.sc-dv::before{background:#8e8e93}
-        .sc-er::before{background:#ff2d78}
-        .sc-def::before{background:#8e8e93}
         /* MODAL */
         .mo{display:none;position:fixed;inset:0;z-index:1000;pointer-events:none}
         .mo-bg{position:absolute;inset:0;background:rgba(0,0,0,.4);opacity:0;will-change:opacity}
@@ -198,6 +173,14 @@
         @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
         @keyframes spin{to{transform:rotate(360deg)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes introHdr{0%{opacity:0;transform:translateY(-30px) scale(.9)}60%{transform:translateY(4px) scale(1.01)}100%{opacity:1;transform:translateY(0) scale(1)}}
+        @keyframes introTrk{0%{opacity:0;transform:translateX(-20px) scale(.8)}100%{opacity:1;transform:translateX(0) scale(1)}}
+        @keyframes introTable{0%{opacity:0;transform:scale(.85) translateY(30px);border-radius:24px}60%{transform:scale(1.01) translateY(-4px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+        @keyframes cellPop{0%{opacity:0;transform:scale(0)}60%{transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+        .intro-active .hdr{animation:introHdr .6s cubic-bezier(.34,1.56,.64,1) .05s both}
+        .intro-active .trkr .trk{animation:introTrk .5s cubic-bezier(.34,1.56,.64,1) both}
+        .intro-active .swipe-wrap{animation:introTable .7s cubic-bezier(.22,1,.36,1) .15s both}
+        .intro-active .sl.hc{animation:cellPop .4s cubic-bezier(.34,1.56,.64,1) both}
         .color-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--mi);border-radius:10px;margin-bottom:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
         .color-row:active{transform:scale(.98)}
         .color-dot{width:24px;height:24px;border-radius:8px;flex-shrink:0;border:2px solid rgba(0,0,0,.08)}
@@ -236,12 +219,14 @@
 <div class="mo" id="setM"><div class="mo-bg" onclick="closeSheet('setM')"></div><div class="mc"><div class="mc-head"><div class="shh"></div><div class="mhr"><h2 class="mtl">Einstellungen</h2><button class="mx" onclick="closeSheet('setM')">&#10005;</button></div></div><div class="mc-body">
 <div class="s-group"><div class="s-row" onclick="togEdit()"><div class="s-row-info"><div class="s-row-label">Bearbeitungsmodus</div><div class="s-row-desc">Fachstunden & Lernbüros verwalten</div></div><div class="s-tog orange" id="editTog"></div></div><div class="s-row" onclick="togSwipe()"><div class="s-row-info"><div class="s-row-label">Wischen</div><div class="s-row-desc">Links/rechts für Wochenwechsel</div></div><div class="s-tog" id="swipeTog"></div></div></div>
 <div class="stl">Lernbüro-Tracking</div><div class="s-group" id="lbCfgOn"></div><div id="lbCfgOffWrap" style="display:none"><div class="stl" style="color:var(--tm);font-size:9px;margin-top:10px">Weitere Fächer</div><div class="s-group" id="lbCfgOff"></div></div>
+<div class="s-group" style="margin-top:6px"><div class="s-row" onclick="openManageSubjects()"><div class="s-row-info"><div class="s-row-label">Fächer verwalten</div><div class="s-row-desc">Fächer aus dem Tracking löschen</div></div><div style="color:var(--mm);font-size:14px">›</div></div></div>
 <div class="stl">Teilen</div><div class="qr-section"><div class="qr-tabs"><div class="qr-tab on" id="qrTabAll" onclick="setQR('all')">Kompletter Plan</div><div class="qr-tab" id="qrTabLB" onclick="setQR('lb')">Nur Lernbüros</div></div><div class="qr-box"><div class="qr-canvas" id="qrCanvas" onclick="showQRFull()"></div><div class="qr-hint" id="qrHint">Antippen zum Vergrößern</div><div class="share-size" id="shareSize"></div></div><div class="qr-code-text" id="qrText" onclick="copyQR()"></div></div>
 <div class="stl">Importieren</div><div class="scan-section"><button class="scan-btn" onclick="startCam()">QR-Code scannen</button><div class="scan-or">oder</div><div class="paste-row"><input class="scan-input" id="scanInput" placeholder="Code einfügen…"><button class="paste-btn" onclick="doPaste()">Einfügen</button></div><button class="sbtn" style="margin-top:4px" onclick="importCode()">Importieren</button></div>
 <div class="stl">Darstellung</div><div class="s-group"><div class="s-row" onclick="togTimes()"><div class="s-row-info"><div class="s-row-label">Uhrzeiten anzeigen</div><div class="s-row-desc">Start- und Endzeit links</div></div><div class="s-tog" id="timesTog"></div></div><div class="s-row" onclick="togFill()"><div class="s-row-info"><div class="s-row-label">Fächer einfärben</div><div class="s-row-desc">Ganzes Feld in Fachfarbe</div></div><div class="s-tog" id="fillTog"></div></div><div class="s-row" onclick="openColorSettings()"><div class="s-row-info"><div class="s-row-label">Fachfarben anpassen</div><div class="s-row-desc">Farbe pro Fach ändern</div></div><div style="color:var(--mm);font-size:14px">›</div></div></div>
 <div style="height:32px"></div>
 </div></div></div>
-<div class="mo" id="colorM"><div class="mo-bg" onclick="closeSheet('colorM')"></div><div class="mc"><div class="mc-head"><div class="shh"></div><div class="mhr"><h2 class="mtl">Fachfarben</h2><button class="mx" onclick="closeSheet('colorM')">&#10005;</button></div></div><div class="mc-body"><div id="colorList"></div></div></div></div>
+<div class="mo" id="colorM"><div class="mo-bg" onclick="closeSheet('colorM')"></div><div class="mc"><div class="mc-head"><div class="shh"></div><div class="mhr"><h2 class="mtl" id="colorMTitle">Fachfarben</h2><button class="mx" onclick="closeSheet('colorM')">&#10005;</button></div></div><div class="mc-body"><div id="colorList"></div></div></div></div>
+<div class="mo" id="manageM"><div class="mo-bg" onclick="closeSheet('manageM')"></div><div class="mc"><div class="mc-head"><div class="shh"></div><div class="mhr"><h2 class="mtl">Fächer verwalten</h2><button class="mx" onclick="closeSheet('manageM')">&#10005;</button></div></div><div class="mc-body"><p style="font-size:10px;color:var(--mm);margin-bottom:10px">Fächer aus dem Tracking entfernen. Das Fach wird nicht aus dem Stundenplan gelöscht.</p><div id="manageList"></div></div></div></div>
 <input type="file" id="lbFileInput" accept="image/*" style="display:none" onchange="handleLBPhoto(this)">
 <div class="mo" id="lbScanM"><div class="mo-bg" onclick="closeSheet('lbScanM')"></div><div class="mc"><div class="mc-head"><div class="shh"></div><div class="mhr"><h2 class="mtl">Erkannte Lernbüros</h2><button class="mx" onclick="closeSheet('lbScanM')">&#10005;</button></div></div><div class="mc-body"><div id="lbScanStatus" style="text-align:center;padding:16px;font-size:12px;color:var(--mm)">Bild wird analysiert...</div><div id="lbScanResults"></div><button class="sbtn" id="lbScanSave" style="display:none" onclick="saveScanResults()">Alle hinzufügen</button></div></div></div>
 <script>
@@ -250,8 +235,6 @@ let cw=6,cy=2026,em=false,sel=null,entfSlot=null,qrMode='all',camStream=null,sca
 let reqLB={},F={},LB={},W={},ENT={},customColors={};
 const NO_LB=new Set(['KU','KUNST','SP','SPORT','MV','MVX1','MVX2','EV','EVX1','EVX2','DV','DVX1','DVX2','MU','MUSIK']);
 const COLORS={D:'#ff3b30',DEUTSCH:'#ff3b30',EK:'#34c759',ERDKUNDE:'#34c759',LI:'#ffcc00',M:'#ffcc00',MATHE:'#ffcc00',PH:'#34c759',PHYSIK:'#34c759',GE:'#32ade6',GESCHICHTE:'#32ade6',MU:'#8e8e93',MUSIK:'#8e8e93',L8:'#ff9500',CH:'#af52de',CHEMIE:'#af52de',IF:'#ffcc00',INFORMATIK:'#ffcc00',PA:'#ff9500',E:'#007aff',ENGLISCH:'#007aff',SW:'#007aff',SOWI:'#007aff',NO:'#ff3b30',BI:'#30d158',BIOLOGIE:'#30d158',KR:'#ff2d78',PL:'#ff2d78',NL:'#ff9500',SN:'#ff9500',FR:'#ff9500',LA:'#ff9500',KU:'#8e8e93',KUNST:'#8e8e93',SP:'#32ade6',SPORT:'#32ade6',MV:'#8e8e93',MVX1:'#8e8e93',MVX2:'#8e8e93',EV:'#8e8e93',EVX1:'#8e8e93',EVX2:'#8e8e93',DV:'#8e8e93',DVX1:'#8e8e93',DVX2:'#8e8e93',ER:'#ff2d78'};
-const SC={D:'sc-d',DEUTSCH:'sc-d',EK:'sc-ek',ERDKUNDE:'sc-ek',LI:'sc-li',M:'sc-m',MATHE:'sc-m',PH:'sc-ph',PHYSIK:'sc-ph',GE:'sc-ge',GESCHICHTE:'sc-ge',MU:'sc-mu',MUSIK:'sc-mu',L8:'sc-l8',CH:'sc-ch',CHEMIE:'sc-ch',IF:'sc-if',INFORMATIK:'sc-if',PA:'sc-pa',E:'sc-e',ENGLISCH:'sc-e',SW:'sc-sw',SOWI:'sc-sw',NO:'sc-no',BI:'sc-bi',BIOLOGIE:'sc-bi',KR:'sc-kr',PL:'sc-pl',NL:'sc-nl',SN:'sc-sn',FR:'sc-fr',LA:'sc-la',KU:'sc-ku',KUNST:'sc-ku',SP:'sc-sp',SPORT:'sc-sp',MV:'sc-mv',MVX1:'sc-mv',MVX2:'sc-mv',EV:'sc-ev',EVX1:'sc-ev',EVX2:'sc-ev',DV:'sc-dv',DVX1:'sc-dv',DVX2:'sc-dv',ER:'sc-er'};
-function gcc(s){return SC[s.toUpperCase()]||'sc-def'}
 function gcol(s){return customColors[s.toUpperCase()]||COLORS[s.toUpperCase()]||'#8e8e93'}
 const DA=['mo','di','mi','do','fr'],DN={mo:'Mo',di:'Di',mi:'Mi',do:'Do',fr:'Fr'};
 function vib(ms){try{navigator.vibrate&&navigator.vibrate(ms||4)}catch(e){}}
@@ -265,7 +248,7 @@ function togFill(){const tog=document.getElementById('fillTog');tog.classList.to
 function applyTimes(){document.querySelectorAll('.tc-time,.tc-time2').forEach(el=>el.style.display=showTimes?'':'none')}
 function autoReq(){const active=new Set();Object.values(F).forEach(f=>{const u=f.s.toUpperCase();if(!NO_LB.has(u))active.add(u)});Object.values(LB).forEach(a=>a.forEach(lb=>{const u=lb.s.toUpperCase();if(!NO_LB.has(u))active.add(u)}));Object.values(W).forEach(wk=>{Object.values(wk).forEach(lb=>{const u=lb.s.toUpperCase();if(!NO_LB.has(u))active.add(u)})});Object.keys(reqLB).forEach(k=>{if(!active.has(k))delete reqLB[k]});active.forEach(u=>{if(!(u in reqLB))reqLB[u]=true})}
 function buildTableHTML(){let h='<div class="dh"><div class="dl"></div><div class="dl">MO</div><div class="dl">DI</div><div class="dl">MI</div><div class="dl">DO</div><div class="dl">FR</div></div><div class="sg">';for(let p=0;p<10;p++){const t=TIMES[p];h+=`<div class="sr"><div class="tc"><div class="tc-time">${t[0]}</div><div class="tc-num">${p+1}</div><div class="tc-time2">${t[1]}</div></div>`;DA.forEach(d=>{h+=`<div class="sl" data-slot="${d}-${p+1}" onclick="slotClick('${d}-${p+1}')"><div class="eh">+</div><div class="lb-dot"></div></div>`});h+='</div>'}return h+'</div>'}
-function renderPage(ct,wCw,wCy){const wk=`${wCy}-W${wCw}`,ent=ENT[wk]||{};if(!ct.querySelector('.sg'))ct.innerHTML=`<div class="tt">${buildTableHTML()}</div>`;const tt=ct.querySelector('.tt');tt.classList.toggle('ea',em);tt.querySelectorAll('.sl').forEach(s=>{const id=s.dataset.slot;s.className='sl';s.style.background='';s.innerHTML='<div class="eh">+</div><div class="lb-dot"></div>';delete s.dataset.type;if(LB[id]&&LB[id].length&&!F[id])s.classList.add('has-lb')});Object.entries(F).forEach(([id,f])=>{const s=tt.querySelector(`[data-slot="${id}"]`);if(!s)return;if(!ent[id]){s.innerHTML=`<div class="ls">${f.s}</div><div class="lt">${f.t}</div><div class="lr">${f.r}</div><button class="sd" onclick="event.stopPropagation();del('${id}')">&#10005;</button><div class="eh">+</div>`;s.className=`sl hc ${gcc(f.s)}`;s.dataset.type='f';if(fillColor)s.style.background=gcol(f.s)+'18'}else if(W[wk]&&W[wk][id]){const lb=W[wk][id];s.innerHTML=`<div class="ls">${lb.s}</div><div class="lt">${lb.t}</div><div class="lr">${lb.r}</div>`;s.className=`sl hc ${gcc(lb.s)}`;s.dataset.type='entf-lb';if(fillColor)s.style.background=gcol(lb.s)+'18'}else{s.innerHTML=`<div class="ls" style="opacity:.3;text-decoration:line-through">${f.s}</div><div class="lb-dot"></div>`;s.className='sl has-lb';s.dataset.type='entf'}});if(W[wk])Object.entries(W[wk]).forEach(([id,lb])=>{const s=tt.querySelector(`[data-slot="${id}"]`);if(s&&!s.dataset.type){s.innerHTML=`<div class="ls">${lb.s}</div><div class="lt">${lb.t}</div><div class="lr">${lb.r}</div><button class="sd" onclick="event.stopPropagation();delW('${id}')">&#10005;</button>`;s.className=`sl hc ${gcc(lb.s)}`;s.dataset.type='l';if(fillColor)s.style.background=gcol(lb.s)+'18'}})}
+function renderPage(ct,wCw,wCy){const wk=`${wCy}-W${wCw}`,ent=ENT[wk]||{};if(!ct.querySelector('.sg'))ct.innerHTML=`<div class="tt">${buildTableHTML()}</div>`;const tt=ct.querySelector('.tt');tt.classList.toggle('ea',em);tt.querySelectorAll('.sl').forEach(s=>{const id=s.dataset.slot;s.className='sl';s.style.background='';s.style.setProperty('--sc','transparent');s.innerHTML='<div class="eh">+</div><div class="lb-dot"></div>';delete s.dataset.type;if(LB[id]&&LB[id].length&&!F[id])s.classList.add('has-lb')});Object.entries(F).forEach(([id,f])=>{const s=tt.querySelector(`[data-slot="${id}"]`);if(!s)return;const col=gcol(f.s);if(!ent[id]){s.innerHTML=`<div class="ls">${f.s}</div><div class="lt">${f.t}</div><div class="lr">${f.r}</div><button class="sd" onclick="event.stopPropagation();del('${id}')">&#10005;</button><div class="eh">+</div>`;s.className='sl hc';s.dataset.type='f';s.style.setProperty('--sc',col);if(fillColor)s.style.background=col+'18'}else if(W[wk]&&W[wk][id]){const lb=W[wk][id];const lc=gcol(lb.s);s.innerHTML=`<div class="ls">${lb.s}</div><div class="lt">${lb.t}</div><div class="lr">${lb.r}</div>`;s.className='sl hc';s.dataset.type='entf-lb';s.style.setProperty('--sc',lc);if(fillColor)s.style.background=lc+'18'}else{s.innerHTML=`<div class="ls" style="opacity:.3;text-decoration:line-through">${f.s}</div><div class="lb-dot"></div>`;s.className='sl has-lb';s.dataset.type='entf'}});if(W[wk])Object.entries(W[wk]).forEach(([id,lb])=>{const s=tt.querySelector(`[data-slot="${id}"]`);if(s&&!s.dataset.type){const lc=gcol(lb.s);s.innerHTML=`<div class="ls">${lb.s}</div><div class="lt">${lb.t}</div><div class="lr">${lb.r}</div><button class="sd" onclick="event.stopPropagation();delW('${id}')">&#10005;</button>`;s.className='sl hc';s.dataset.type='l';s.style.setProperty('--sc',lc);if(fillColor)s.style.background=lc+'18'}})}
 function getWeek(o){let w=cw+o,y=cy;if(w>52){w-=52;y++}else if(w<1){w+=52;y--}return[w,y]}
 function renderAll(){const[pw,py]=getWeek(-1),[nw,ny]=getWeek(1);renderPage(document.getElementById('pagePrev'),pw,py);renderPage(document.getElementById('pageCur'),cw,cy);renderPage(document.getElementById('pageNext'),nw,ny)}
 function render(){renderAll();rTrk();sv()}
@@ -431,12 +414,22 @@ function manualBulkSave(){
     });
     if(added){vib([3,8,3,8,3]);render();closeSheet('lbScanM');setTimeout(()=>{sel=id;openEdit(id);sTab('l')},300)}else{vib([10,6,10])}
 }
+function openManageSubjects(){closeSheet('setM');setTimeout(()=>{renderManageList();openSheet('manageM')},300)}
+function renderManageList(){const el=document.getElementById('manageList');el.innerHTML='';const all=new Set();Object.values(F).forEach(f=>{const u=f.s.toUpperCase();if(!NO_LB.has(u))all.add(u)});Object.values(LB).forEach(a=>a.forEach(lb=>{if(!NO_LB.has(lb.s.toUpperCase()))all.add(lb.s.toUpperCase())}));const sorted=[...all].sort();if(!sorted.length){el.innerHTML='<p style="font-size:11px;color:var(--mm);text-align:center;padding:16px">Keine Fächer vorhanden.</p>';return}sorted.forEach(s=>{const on=!!reqLB[s];const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--mi);border-radius:10px;margin-bottom:4px';row.innerHTML=`<div style="width:4px;height:24px;border-radius:2px;background:${gcol(s)};flex-shrink:0"></div><div style="flex:1;font-weight:700;font-size:13px;color:var(--mt)">${s}</div><span style="font-size:9px;color:var(--mm);margin-right:4px">${on?'aktiv':'inaktiv'}</span><button onclick="event.stopPropagation();deleteSubject('${s}')" style="background:rgba(255,59,48,.08);color:#ff3b30;border:none;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:12px;flex-shrink:0">✕</button>`;el.appendChild(row)})}
+function deleteSubject(s){if(!confirm(`"${s}" wirklich aus dem Tracking entfernen?`))return;delete reqLB[s];vib(4);rTrk();sv();renderManageList()}
 function openColorSettings(){closeSheet('setM');setTimeout(()=>{const el=document.getElementById('colorList');el.innerHTML='';const allSubj=new Set();Object.values(F).forEach(f=>allSubj.add(f.s.toUpperCase()));Object.values(LB).forEach(a=>a.forEach(lb=>allSubj.add(lb.s.toUpperCase())));const sorted=[...allSubj].sort();if(!sorted.length){el.innerHTML='<p style="font-size:11px;color:var(--mm);text-align:center;padding:16px">Noch keine Fächer vorhanden.</p>';openSheet('colorM');return}sorted.forEach(s=>{const c=gcol(s);const row=document.createElement('div');row.className='color-row';row.innerHTML=`<div class="color-dot" style="background:${c}"></div><div class="color-name">${s}</div><div class="color-hex">${c}</div>`;row.onclick=()=>openColorPicker(s);el.appendChild(row)});openSheet('colorM')},300)}
 const COLOR_PRESETS=['#ff3b30','#ff9500','#ffcc00','#34c759','#30d158','#00c7be','#32ade6','#007aff','#5856d6','#af52de','#ff2d78','#8e8e93','#636366','#48484a'];
 function openColorPicker(subj){const el=document.getElementById('colorList');const cur=gcol(subj);el.innerHTML=`<div class="color-pick-wrap"><div class="color-pick-subj" style="color:${cur}">${subj}</div><div class="color-presets" id="cpPresets"></div><div class="color-hex-row"><input class="color-hex-input" id="cpHex" value="${cur}" maxlength="7" placeholder="#ff3b30"><div class="color-preview" id="cpPreview" style="background:${cur}"></div></div><button class="sbtn" onclick="saveColor('${subj}')">Speichern</button><button class="sbtn" style="background:var(--mi);color:var(--mt);margin-top:6px" onclick="resetColor('${subj}')">Zurücksetzen</button><button class="sbtn" style="background:var(--mi);color:var(--mm);margin-top:6px" onclick="openColorSettings()">← Zurück</button></div>`;const pre=document.getElementById('cpPresets');COLOR_PRESETS.forEach(c=>{const d=document.createElement('div');d.className=`color-preset${c===cur?' sel':''}`;d.style.background=c;d.onclick=()=>{document.getElementById('cpHex').value=c;document.getElementById('cpPreview').style.background=c;document.querySelector('.color-pick-subj').style.color=c;pre.querySelectorAll('.color-preset').forEach(p=>p.classList.remove('sel'));d.classList.add('sel');vib(3)};pre.appendChild(d)});document.getElementById('cpHex').addEventListener('input',function(){let v=this.value.trim();if(!v.startsWith('#'))v='#'+v;if(/^#[0-9a-fA-F]{6}$/.test(v)){document.getElementById('cpPreview').style.background=v;document.querySelector('.color-pick-subj').style.color=v;pre.querySelectorAll('.color-preset').forEach(p=>p.classList.remove('sel'))}})}
 function saveColor(subj){const hex=document.getElementById('cpHex').value.trim();if(!/^#[0-9a-fA-F]{6}$/.test(hex)){vib([10,6,10]);return}customColors[subj]=hex;vib([3,6,3]);render();sv();openColorSettings()}
 function resetColor(subj){delete customColors[subj];vib(3);render();sv();openColorSettings()}
-function init(){ld();document.getElementById('wd').textContent=`KW ${cw}, ${cy}`;autoReq();render();initSwipe();applyTimes();firstLoad=false}
+function init(){ld();document.getElementById('wd').textContent=`KW ${cw}, ${cy}`;autoReq();render();initSwipe();applyTimes();
+// Intro animation
+const ctn=document.getElementById('mainCtn');ctn.classList.add('intro-active');
+// Stagger tracker bubbles
+document.querySelectorAll('.trkr .trk').forEach((el,i)=>{el.style.animationDelay=`${100+i*60}ms`});
+// Stagger filled cells popping in
+document.querySelectorAll('#pageCur .sl.hc').forEach((el,i)=>{el.style.animationDelay=`${300+i*40}ms`});
+setTimeout(()=>{ctn.classList.remove('intro-active');firstLoad=false},2000)}
 init();
 </script>
 <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})</script>
