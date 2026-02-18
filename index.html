@@ -173,14 +173,8 @@
         @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
         @keyframes spin{to{transform:rotate(360deg)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes introHdr{0%{opacity:0;transform:translateY(-30px) scale(.9)}60%{transform:translateY(4px) scale(1.01)}100%{opacity:1;transform:translateY(0) scale(1)}}
-        @keyframes introTrk{0%{opacity:0;transform:translateX(-20px) scale(.8)}100%{opacity:1;transform:translateX(0) scale(1)}}
-        @keyframes introTable{0%{opacity:0;transform:scale(.85) translateY(30px);border-radius:24px}60%{transform:scale(1.01) translateY(-4px)}100%{opacity:1;transform:scale(1) translateY(0)}}
-        @keyframes cellPop{0%{opacity:0;transform:scale(0)}60%{transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
-        .intro-active .hdr{animation:introHdr .6s cubic-bezier(.34,1.56,.64,1) .05s both}
-        .intro-active .trkr .trk{animation:introTrk .5s cubic-bezier(.34,1.56,.64,1) both}
-        .intro-active .swipe-wrap{animation:introTable .7s cubic-bezier(.22,1,.36,1) .15s both}
-        .intro-active .sl.hc{animation:cellPop .4s cubic-bezier(.34,1.56,.64,1) both}
+        @keyframes appIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+        .intro-active{animation:appIn .5s cubic-bezier(.22,1,.36,1) both}
         .color-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--mi);border-radius:10px;margin-bottom:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
         .color-row:active{transform:scale(.98)}
         .color-dot{width:24px;height:24px;border-radius:8px;flex-shrink:0;border:2px solid rgba(0,0,0,.08)}
@@ -423,13 +417,8 @@ function openColorPicker(subj){const el=document.getElementById('colorList');con
 function saveColor(subj){const hex=document.getElementById('cpHex').value.trim();if(!/^#[0-9a-fA-F]{6}$/.test(hex)){vib([10,6,10]);return}customColors[subj]=hex;vib([3,6,3]);render();sv();openColorSettings()}
 function resetColor(subj){delete customColors[subj];vib(3);render();sv();openColorSettings()}
 function init(){ld();document.getElementById('wd').textContent=`KW ${cw}, ${cy}`;autoReq();render();initSwipe();applyTimes();
-// Intro animation
-const ctn=document.getElementById('mainCtn');ctn.classList.add('intro-active');
-// Stagger tracker bubbles
-document.querySelectorAll('.trkr .trk').forEach((el,i)=>{el.style.animationDelay=`${100+i*60}ms`});
-// Stagger filled cells popping in
-document.querySelectorAll('#pageCur .sl.hc').forEach((el,i)=>{el.style.animationDelay=`${300+i*40}ms`});
-setTimeout(()=>{ctn.classList.remove('intro-active');firstLoad=false},2000)}
+document.getElementById('mainCtn').classList.add('intro-active');
+setTimeout(()=>{document.getElementById('mainCtn').classList.remove('intro-active');firstLoad=false},600)}
 init();
 </script>
 <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})</script>
